@@ -1,0 +1,46 @@
+{
+    "name":            "extra-jpg-cleaner",
+    "preferGlobal":    true,
+    "version":         "0.0.1-alpha.1",
+    "author":          "WhiteTrefoil <whitetrefoil@gmail.com>",
+    "description":     "a simple tool to remove JPG files which append to ARW files",
+    "bin":             {
+        "clean-jpg": "./bin/clean-jpg"
+    },
+    "scripts":         {
+        "start": "node ./bin/clean-jpg",
+        "test":  "node ./node_modules/mocha/bin/mocha -R nyan -c -s 100 -u bdd --recursive --compilers coffee:coffee-script/register test/specs/*_spec.coffee"
+    },
+    "main":            "./lib/cleaner",
+    "repository":      {
+        "type": "git",
+        "url":  "https://github.com/whitetrefoil/extra-jpg-cleaner.git"
+    },
+    "keywords":        [
+        "jpg",
+        "raw",
+        "arw",
+        "photo",
+        "photography"
+    ],
+    "dependencies":    {
+        "glob":   "^3.2.9",
+        "colors": "^0.6.2",
+        "lodash": "^2.4.1",
+        "yargs":  "^1.2.1"
+    },
+    "devDependencies": {
+        "chai":          "^1.9.1",
+        "sinon":         "^1.9.1",
+        "sinon-chai":    "^2.5.0",
+        "mocha":         "^1.18.2",
+        "coffee-script": "^1.7.1",
+        "docco":         "^0.6.3",
+        "wrench":        "^1.5.8"
+    },
+    "license":         "MIT",
+    "engines":         {
+        "node": ">=0.10"
+    },
+    "readmeFilename":  "README.md"
+}
