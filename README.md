@@ -17,7 +17,7 @@ Options:
                            case-INsensitive
                            a comma-seperated list is acceptable
                            e.g. "-x nef,cr2,dng"
-                                                                  [default: "arw"]
+                                                          [default: "arw,rw2,nef"]
     -r, --rename           the extname used when renaming
                                              [default: "extra-jpg-cleaner-result"]
     -d, --delete           !!!CAUTION!!!
