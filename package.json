@@ -1,7 +1,7 @@
 {
     "name":            "extra-jpg-cleaner",
     "preferGlobal":    true,
-    "version":         "0.0.1-alpha.2",
+    "version":         "0.0.1-alpha.3",
     "author":          "WhiteTrefoil <whitetrefoil@gmail.com>",
     "description":     "a simple tool to remove JPG files which append to ARW files",
     "bin":             {
