@@ -44,7 +44,11 @@
         
         <p>This is a internal lib file.  It will be included at the head of <a href="cleaner.html">cleaner.litcoffee</a>.</p>
 <h2 id="arguments">Arguments</h2>
-<p><code>&quot;use strict&quot;;</code> always first :)</p>
+
+        
+      
+        
+        <p><code>&quot;use strict&quot;;</code> always first :)</p>
 
         
           <div class='highlight'><pre><span class="hljs-string">'use strict'</span></pre></div>
@@ -116,20 +120,38 @@ Usually a name will be as safe as long.</p>
         <p>Delete the files <strong>DIRECTLY</strong>.</p>
 <p>The default behavior of this application is rename the target files then you can check it manually.
 It’s for safety purpose.</p>
+<p>This will require a complex confirmation.</p>
 
         
-          <div class='highlight'><pre>.options <span class="hljs-string">'D'</span>,
+          <div class='highlight'><pre>.options <span class="hljs-string">'d'</span>,
   <span class="hljs-attribute">alias</span>: <span class="hljs-string">'delete'</span>
   <span class="hljs-attribute">boolean</span>: <span class="hljs-literal">true</span>
   <span class="hljs-attribute">describe</span>: <span class="hljs-string">'!!!CAUTION!!!\n'</span>.yellow.bold +
             <span class="hljs-string">"""
-            delete files <span class="hljs-subst">#{<span class="hljs-string">'DIRECTLY'</span>.yellow}</span> w/o any confirmation
-            it WON'T move your files to the recycle bin or trash can
-            generally this operation will be unrecoverable
-            try this only if you think your luck is overwhelming
-            incase something goes wrong
-            go to buy a EasyRecovery or something similar
-            then test your overwhelming luck again...
+            Delete DIRECTLY w/ a single confirmation
+            instead of confirming one by one.
+            It WON'T move your files to the recycle bin
+            or trash can.
+            Generally this operation will be unrecoverable.
+            Try this only if you think your luck is overwhelming.
+            Incase something goes wrong,
+            go to buy an EasyRecovery or something similar.
+            Then test your overwhelming luck again...
+            """</span></pre></div>
+        
+      
+        
+        <p>Delete the files <strong>DIRECTLY</strong> with only a simple confirmation.</p>
+<p>Same as <code>-d</code> but will just ask a simple <code>Y/N</code>.</p>
+
+        
+          <div class='highlight'><pre>.options <span class="hljs-string">'D'</span>,
+  <span class="hljs-attribute">alias</span>: <span class="hljs-string">'delete-directly'</span>
+  <span class="hljs-attribute">boolean</span>: <span class="hljs-literal">true</span>
+  <span class="hljs-attribute">describe</span>: <span class="hljs-string">'!!!CAUTION!!!\n'</span>.red.bold +
+            <span class="hljs-string">"""
+            Same as "-d" but with
+            only even simpler "Y/N" confirmation.
             """</span></pre></div>
         
       
@@ -176,7 +198,7 @@ Actually will print every file when renaming / deleting.</p>
 <p>As a result, all properties &amp; results of that are available.</p>
 
         
-          <div class='highlight'><pre><span class="hljs-built_in">module</span>.<span class="hljs-built_in">exports</span> = yargs</pre></div>
+          <div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = yargs</pre></div>
         
       
       <div class="fleur">h</div>

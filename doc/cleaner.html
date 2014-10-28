@@ -51,7 +51,11 @@
       
         
         <h2 id="dependencies">Dependencies</h2>
-<p>Require all the dependencies.</p>
+
+        
+      
+        
+        <p>Require all the dependencies.</p>
 <p>Firstly get the arguments from <a href="argv.html">argv.litcoffee</a></p>
 
         
@@ -72,7 +76,11 @@ Glob = <span class="hljs-built_in">require</span>(<span class="hljs-string">'glo
       
         
         <h2 id="entry-point">Entry Point</h2>
-<p>The <code>main()</code> function of the whole application.</p>
+
+        
+      
+        
+        <p>The <code>main()</code> function of the whole application.</p>
 <p>Firstly it will get all the configurations from <code>yargs</code>.</p>
 <p>If given a <code>--help</code> or <code>-h</code>, we will print a help message no matter what else is given.  Besides, if no valid argument is given, we will also print he help message.</p>
 <p>I’d like to leave the <code>argv</code> open.
@@ -89,17 +97,19 @@ it will also print the help message.</p>
   [ isConfigsValid, messages ] = checkIfValid(configs)
 
   <span class="hljs-keyword">if</span> isConfigsValid
-    messages.forEach <span class="hljs-function"><span class="hljs-params">(msg)</span> -&gt;</span> <span class="hljs-built_in">console</span>.war msg
+    messages.forEach (msg) -&gt; <span class="hljs-built_in">console</span>.war msg
     <span class="hljs-keyword">if</span> configs.help
         printHelp()
     <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> configs.list
       find configs.destination, configs.extnames, list
     <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> configs.remove
-      findSync configs.destination, configs.extnames, remove, configs.verbose
+      findSync configs.destination, configs.extnames, removeWithConfirmation, configs.verbose
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> configs.removeDirectly
+      findSync configs.destination, configs.extnames, removeDirectly, configs.verbose
     <span class="hljs-keyword">else</span>
       find configs.destination, configs.extnames, rename, configs.renameTo, configs.verbose
   <span class="hljs-keyword">else</span>
-    messages.forEach <span class="hljs-function"><span class="hljs-params">(msg)</span> -&gt;</span>
+    messages.forEach (msg) -&gt;
       <span class="hljs-built_in">console</span>.error <span class="hljs-string">'Error: '</span>.red.bold + msg
     <span class="hljs-built_in">console</span>.log <span class="hljs-string">''</span>
     printHelp()</pre></div>
@@ -107,7 +117,11 @@ it will also print the help message.</p>
       
         
         <h2 id="core-functions">Core Functions</h2>
-<p>Now here are the core functions - finding, renaming, deleting, etc.</p>
+
+        
+      
+        
+        <p>Now here are the core functions - finding, renaming, deleting, etc.</p>
 
         
           <div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">find</span> = <span class="hljs-params">(dest, extnames, cb, args...)</span> -&gt;</span>
@@ -121,11 +135,11 @@ it will also print the help message.</p>
   matching.<span class="hljs-literal">on</span> <span class="hljs-string">'match'</span>, <span class="hljs-function"><span class="hljs-params">(file)</span> -&gt;</span>
     file = path.normalize file
     bareFileName = path.join(path.dirname(file), path.basename(file, path.extname(file)))
-    <span class="hljs-keyword">if</span> <span class="hljs-function"><span class="hljs-params">(extnames.some (extname) -&gt; fs.existsSync(bareFileName + <span class="hljs-string">'.'</span> + extname))</span>
-      <span class="hljs-title">found</span> += 1
-      <span class="hljs-title">cb</span>?.<span class="hljs-title">apply</span> <span class="hljs-title">null</span>, [ <span class="hljs-title">file</span> ].<span class="hljs-title">concat</span><span class="hljs-params">(args)</span>
+    <span class="hljs-keyword">if</span> (extnames.some (extname) -&gt; fs.existsSync(bareFileName + <span class="hljs-string">'.'</span> + extname))
+      found += <span class="hljs-number">1</span>
+      cb?.apply <span class="hljs-literal">null</span>, [ file ].concat(args)
 
-  <span class="hljs-title">matching</span>.<span class="hljs-title">on</span> '<span class="hljs-title">end</span>', -&gt;</span>
+  matching.<span class="hljs-literal">on</span> <span class="hljs-string">'end'</span>, <span class="hljs-function">-&gt;</span>
     <span class="hljs-built_in">console</span>.log <span class="hljs-string">"<span class="hljs-subst">#{found}</span> files processed"</span>.green</pre></div>
         
       
@@ -141,10 +155,10 @@ but when doing deleting we want a sync find then allow a confirmation before fin
     <span class="hljs-attribute">nocase</span>: <span class="hljs-literal">true</span>
 
   matching.<span class="hljs-literal">on</span> <span class="hljs-string">'end'</span>, <span class="hljs-function"><span class="hljs-params">(files)</span> -&gt;</span>
-    targetFiles = files.filter <span class="hljs-function"><span class="hljs-params">(file)</span> -&gt;</span>
+    targetFiles = files.filter (file) -&gt;
       file = path.normalize file
       bareFileName = path.join(path.dirname(file), path.basename(file, path.extname(file)))
-      extnames.some <span class="hljs-function"><span class="hljs-params">(extname)</span> -&gt;</span> fs.existsSync(bareFileName + <span class="hljs-string">'.'</span> + extname)
+      extnames.some (extname) -&gt; fs.existsSync(bareFileName + <span class="hljs-string">'.'</span> + extname)
     cb?.apply <span class="hljs-literal">null</span>, [ targetFiles ].concat(args)</pre></div>
         
       
@@ -176,19 +190,38 @@ Since deleting is too dangerous, we want double confirm with the user.
 So it will be a sync flow.</p>
 
         
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">remove</span> = <span class="hljs-params">(files, verbose)</span> -&gt;</span>
+          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">removeWithConfirmation</span> = <span class="hljs-params">(files, verbose)</span> -&gt;</span>
   <span class="hljs-keyword">if</span> files.length <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
     <span class="hljs-built_in">console</span>.log <span class="hljs-string">'No file to delete, cheers!'</span>.cyan
   <span class="hljs-keyword">else</span>
-    files.forEach <span class="hljs-function"><span class="hljs-params">(file)</span> -&gt;</span>
+    files.forEach (file) -&gt;
       <span class="hljs-built_in">console</span>.log file
     <span class="hljs-built_in">console</span>.log <span class="hljs-string">'The above files ('</span>.yellow + files.length.toString().red.bold + <span class="hljs-string">' at all) will be removed PERMANENTLY!'</span>.yellow
     <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Please double check and make sure you will never want to see them again!'</span>.yellow
     <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Input the full path of the first file listed above to continue:'</span>.yellow.bold
     expected = path.resolve files[<span class="hljs-number">0</span>]
 
-    confirmWithUser expected,<span class="hljs-function"> -&gt;</span>
-      files.forEach <span class="hljs-function"><span class="hljs-params">(file)</span> -&gt;</span>
+    confirmWithUser expected, <span class="hljs-function">-&gt;</span>
+      files.forEach (file) -&gt;
+        <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Deleting: '</span>.red + file <span class="hljs-keyword">if</span> verbose
+        fs.unlinkSync file
+      <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Deleted! Hopefully you will never repent'</span>.green.bold</pre></div>
+        
+      
+        
+        <p>Or maybe the user don’t want to do such a complex confirmation…</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">removeDirectly</span> = <span class="hljs-params">(files, verbose)</span> -&gt;</span>
+  <span class="hljs-keyword">if</span> files.length <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
+    <span class="hljs-built_in">console</span>.log <span class="hljs-string">'No file to delete, cheers!'</span>.cyan
+  <span class="hljs-keyword">else</span>
+    files.forEach (file) -&gt;
+      <span class="hljs-built_in">console</span>.log file
+    <span class="hljs-built_in">console</span>.log <span class="hljs-string">'The above files ('</span>.yellow + files.length.toString().red.bold + <span class="hljs-string">' at all) will be removed PERMANENTLY!'</span>.yellow
+    <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Are you really sure? (Y/N)'</span>
+    confirmWithUser <span class="hljs-string">'Y'</span>, <span class="hljs-function">-&gt;</span>
+      files.forEach (file) -&gt;
         <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Deleting: '</span>.red + file <span class="hljs-keyword">if</span> verbose
         fs.unlinkSync file
       <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Deleted! Hopefully you will never repent'</span>.green.bold</pre></div>
@@ -196,7 +229,11 @@ So it will be a sync flow.</p>
       
         
         <h2 id="helpers">Helpers</h2>
-<p>A function to print the help message to the users.</p>
+
+        
+      
+        
+        <p>A function to print the help message to the users.</p>
 <p>By default <code>Yargs</code> will print the help message to <code>stderr</code>. I don’t like it, so I redirected it to <code>stdout</code>.</p>
 
         
@@ -233,7 +270,11 @@ Used before deleting files.</p>
       
         
         <h2 id="initialize-configuration">Initialize &amp; Configuration</h2>
-<p>Get the configurations from <code>yargs</code>.</p>
+
+        
+      
+        
+        <p>Get the configurations from <code>yargs</code>.</p>
 
         
           <div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">getConfigs</span> = <span class="hljs-params">(argv)</span> -&gt;</span>
@@ -243,7 +284,7 @@ Used before deleting files.</p>
     yargs.argv
   configs = {}
 
-  configs.extnames = args.x.split<span class="hljs-function"><span class="hljs-params">(<span class="hljs-string">','</span>)</span>.<span class="hljs-title">map</span> <span class="hljs-params">(ext)</span> -&gt;</span> ext.trim().replace(<span class="hljs-regexp">/^\./</span>, <span class="hljs-string">''</span>)
+  configs.extnames = args.x.split(<span class="hljs-string">','</span>).map (ext) -&gt; ext.trim().replace(<span class="hljs-regexp">/^\./</span>, <span class="hljs-string">''</span>)
   <span class="hljs-keyword">delete</span> args.x
   <span class="hljs-keyword">delete</span> args.extname
 
@@ -251,9 +292,14 @@ Used before deleting files.</p>
   <span class="hljs-keyword">delete</span> args.r
   <span class="hljs-keyword">delete</span> args.rename
 
-  configs.remove = args.D
-  <span class="hljs-keyword">delete</span> args.D
+  configs.remove = args.d
+  <span class="hljs-keyword">delete</span> args.d
   <span class="hljs-keyword">delete</span> args.<span class="hljs-keyword">delete</span>
+
+  configs.removeDirectly = args.D
+  <span class="hljs-keyword">delete</span> args.D
+  <span class="hljs-keyword">delete</span> args.deleteDirectly
+  <span class="hljs-keyword">delete</span> args[<span class="hljs-string">'delete-directly'</span>]
 
   configs.list = args.l
   <span class="hljs-keyword">delete</span> args.l
@@ -312,10 +358,14 @@ Used before deleting files.</p>
       
         
         <h2 id="public-api">Public API</h2>
-<p>Now we can publish the main entry point.</p>
 
         
-          <div class='highlight'><pre><span class="hljs-built_in">module</span>.<span class="hljs-built_in">exports</span> = main</pre></div>
+      
+        
+        <p>Now we can publish the main entry point.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = main</pre></div>
         
       
       <div class="fleur">h</div>
