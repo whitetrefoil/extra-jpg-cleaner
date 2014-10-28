@@ -36,7 +36,8 @@ You can give a comma-separated list of extnames (e.g. `-x nef,cr2,dng`).
 
 Besides, this is case-**in**sensitive.
 
-My default is "_ARW_" because I'm a NEX user :)
+My default is "_ARW,RW2,NEF_",
+because I own 2 Sony, 1 Panasonic, and my Dad owns 2 Nikon :)
 
     .options 'x',
       alias: 'extname'
@@ -46,7 +47,7 @@ My default is "_ARW_" because I'm a NEX user :)
                 #{'e.g. "-x nef,cr2,dng"'.cyan}
 
                 """
-      default: 'arw'
+      default: 'arw,rw2,nef'
 
 The extname can be overridden if you want.
 But we still suggest you can use a outstanding name to prevent confusion with others.
