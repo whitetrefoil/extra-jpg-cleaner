@@ -54,7 +54,9 @@ it will also print the help message.
         else if configs.list
           find configs.destination, configs.extnames, list
         else if configs.remove
-          findSync configs.destination, configs.extnames, remove, configs.verbose
+          findSync configs.destination, configs.extnames, removeWithConfirmation, configs.verbose
+        else if configs.removeDirectly
+          findSync configs.destination, configs.extnames, removeDirectly, configs.verbose
         else
           find configs.destination, configs.extnames, rename, configs.renameTo, configs.verbose
       else
@@ -127,7 +129,7 @@ But this one is different.
 Since deleting is too dangerous, we want double confirm with the user.
 So it will be a sync flow.
 
-    remove = (files, verbose) ->
+    removeWithConfirmation = (files, verbose) ->
       if files.length is 0
         console.log 'No file to delete, cheers!'.cyan
       else
@@ -143,6 +145,23 @@ So it will be a sync flow.
             console.log 'Deleting: '.red + file if verbose
             fs.unlinkSync file
           console.log 'Deleted! Hopefully you will never repent'.green.bold
+
+Or maybe the user don't want to do such a complex confirmation...
+
+    removeDirectly = (files, verbose) ->
+      if files.length is 0
+        console.log 'No file to delete, cheers!'.cyan
+      else
+        files.forEach (file) ->
+          console.log file
+        console.log 'The above files ('.yellow + files.length.toString().red.bold + ' at all) will be removed PERMANENTLY!'.yellow
+        console.log 'Are you really sure? (Y/N)'
+        confirmWithUser 'Y', ->
+          files.forEach (file) ->
+            console.log 'Deleting: '.red + file if verbose
+            fs.unlinkSync file
+          console.log 'Deleted! Hopefully you will never repent'.green.bold
+
 
 Helpers
 -----
@@ -201,9 +220,14 @@ Get the configurations from `yargs`.
       delete args.r
       delete args.rename
 
-      configs.remove = args.D
-      delete args.D
+      configs.remove = args.d
+      delete args.d
       delete args.delete
+
+      configs.removeDirectly = args.D
+      delete args.D
+      delete args.deleteDirectly
+      delete args['delete-directly']
 
       configs.list = args.l
       delete args.l

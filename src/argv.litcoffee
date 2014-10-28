@@ -62,18 +62,35 @@ Delete the files **DIRECTLY**.
 The default behavior of this application is rename the target files then you can check it manually.
 It's for safety purpose.
 
-    .options 'D',
+This will require a complex confirmation.
+
+    .options 'd',
       alias: 'delete'
       boolean: true
       describe: '!!!CAUTION!!!\n'.yellow.bold +
                 """
-                delete files #{'DIRECTLY'.yellow} w/o any confirmation
-                it WON'T move your files to the recycle bin or trash can
-                generally this operation will be unrecoverable
-                try this only if you think your luck is overwhelming
-                incase something goes wrong
-                go to buy a EasyRecovery or something similar
-                then test your overwhelming luck again...
+                Delete DIRECTLY w/ a single confirmation
+                instead of confirming one by one.
+                It WON'T move your files to the recycle bin
+                or trash can.
+                Generally this operation will be unrecoverable.
+                Try this only if you think your luck is overwhelming.
+                Incase something goes wrong,
+                go to buy an EasyRecovery or something similar.
+                Then test your overwhelming luck again...
+                """
+
+Delete the files **DIRECTLY** with only a simple confirmation.
+
+Same as `-d` but will just ask a simple `Y/N`.
+
+    .options 'D',
+      alias: 'delete-directly'
+      boolean: true
+      describe: '!!!CAUTION!!!\n'.red.bold +
+                """
+                Same as "-d" but with
+                only even simpler "Y/N" confirmation.
                 """
 
 For such a application (who do the cleanup jobs), allow user to dry run is a good idea.
