@@ -23,6 +23,10 @@ Then there are some external dependencies...
     readline = require 'readline'
     Glob = require('glob').Glob
 
+File searching function.
+
+    finder = require './finder'
+
 
 Entry Point
 -----
@@ -52,13 +56,13 @@ it will also print the help message.
         if configs.help
             printHelp()
         else if configs.list
-          find configs.destination, configs.extnames, list
+          finder.find configs.destination, configs.extnames, list
         else if configs.remove
-          findSync configs.destination, configs.extnames, removeWithConfirmation, configs.verbose
+          finder.findSync configs.destination, configs.extnames, removeWithConfirmation, configs.verbose
         else if configs.removeDirectly
-          findSync configs.destination, configs.extnames, removeDirectly, configs.verbose
+          finder.findSync configs.destination, configs.extnames, removeDirectly, configs.verbose
         else
-          find configs.destination, configs.extnames, rename, configs.renameTo, configs.verbose
+          finder.find configs.destination, configs.extnames, rename, configs.renameTo, configs.verbose
       else
         messages.forEach (msg) ->
           console.error 'Error: '.red.bold + msg
@@ -68,44 +72,6 @@ it will also print the help message.
 
 Core Functions
 -----
-
-Now here are the core functions - finding, renaming, deleting, etc.
-
-    find = (dest, extnames, cb, args...) ->
-      pattern = path.normalize(dest) + '/**/*.+(jpg|jpeg|jpe)'
-
-      matching = new Glob pattern,
-        nocase: true
-
-      found = 0
-
-      matching.on 'match', (file) ->
-        file = path.normalize file
-        bareFileName = path.join(path.dirname(file), path.basename(file, path.extname(file)))
-        if (extnames.some (extname) -> fs.existsSync(bareFileName + '.' + extname))
-          found += 1
-          cb?.apply null, [ file ].concat(args)
-
-      matching.on 'end', ->
-        console.log "#{found} files processed".green
-
-
-An async find will be good for performance,
-but when doing deleting we want a sync find then allow a confirmation before finally deleting.
-
-    findSync = (dest, extnames, cb, args...) ->
-      pattern = path.normalize(dest) + '/**/*.+(jpg|jpeg|jpe)'
-
-      matching = new Glob pattern,
-        nocase: true
-
-      matching.on 'end', (files) ->
-        targetFiles = files.filter (file) ->
-          file = path.normalize file
-          bareFileName = path.join(path.dirname(file), path.basename(file, path.extname(file)))
-          extnames.some (extname) -> fs.existsSync(bareFileName + '.' + extname)
-        cb?.apply null, [ targetFiles ].concat(args)
-
 
 List a single file.
 Used for `-l`.
