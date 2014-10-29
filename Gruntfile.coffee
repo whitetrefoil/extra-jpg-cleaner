@@ -36,7 +36,7 @@ module.exports = (grunt) ->
           require: 'coffee-script/register'
           colors: true
           quiet: false
-        src: 'test/specs/**/*_spec.+(coffee|litcoffee|js)'
+        src: 'test/specs/**/*.spec.+(coffee|litcoffee|js)'
       server:
         options:
           reporter: 'html'

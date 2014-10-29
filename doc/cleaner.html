@@ -51,11 +51,7 @@
       
         
         <h2 id="dependencies">Dependencies</h2>
-
-        
-      
-        
-        <p>Require all the dependencies.</p>
+<p>Require all the dependencies.</p>
 <p>Firstly get the arguments from <a href="argv.html">argv.litcoffee</a></p>
 
         
@@ -76,11 +72,7 @@ Glob = <span class="hljs-built_in">require</span>(<span class="hljs-string">'glo
       
         
         <h2 id="entry-point">Entry Point</h2>
-
-        
-      
-        
-        <p>The <code>main()</code> function of the whole application.</p>
+<p>The <code>main()</code> function of the whole application.</p>
 <p>Firstly it will get all the configurations from <code>yargs</code>.</p>
 <p>If given a <code>--help</code> or <code>-h</code>, we will print a help message no matter what else is given.  Besides, if no valid argument is given, we will also print he help message.</p>
 <p>I’d like to leave the <code>argv</code> open.
@@ -117,11 +109,7 @@ it will also print the help message.</p>
       
         
         <h2 id="core-functions">Core Functions</h2>
-
-        
-      
-        
-        <p>Now here are the core functions - finding, renaming, deleting, etc.</p>
+<p>Now here are the core functions - finding, renaming, deleting, etc.</p>
 
         
           <div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">find</span> = <span class="hljs-params">(dest, extnames, cb, args...)</span> -&gt;</span>
@@ -229,11 +217,7 @@ So it will be a sync flow.</p>
       
         
         <h2 id="helpers">Helpers</h2>
-
-        
-      
-        
-        <p>A function to print the help message to the users.</p>
+<p>A function to print the help message to the users.</p>
 <p>By default <code>Yargs</code> will print the help message to <code>stderr</code>. I don’t like it, so I redirected it to <code>stdout</code>.</p>
 
         
@@ -270,11 +254,7 @@ Used before deleting files.</p>
       
         
         <h2 id="initialize-configuration">Initialize &amp; Configuration</h2>
-
-        
-      
-        
-        <p>Get the configurations from <code>yargs</code>.</p>
+<p>Get the configurations from <code>yargs</code>.</p>
 
         
           <div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">getConfigs</span> = <span class="hljs-params">(argv)</span> -&gt;</span>
@@ -358,11 +338,7 @@ Used before deleting files.</p>
       
         
         <h2 id="public-api">Public API</h2>
-
-        
-      
-        
-        <p>Now we can publish the main entry point.</p>
+<p>Now we can publish the main entry point.</p>
 
         
           <div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = main</pre></div>
