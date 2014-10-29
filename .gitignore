@@ -36,3 +36,6 @@ build/
 
 # npm
 node_modules/
+
+# test results
+test_results/

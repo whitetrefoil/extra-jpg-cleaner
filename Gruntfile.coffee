@@ -26,25 +26,23 @@ module.exports = (grunt) ->
         layout: 'linear'
       build:
         src: ['src/**/*.+(coffee|litcoffee)']
-    mochaTest:
+    mochacov:
       options:
         ui: 'bdd'
         slow: 100
-      client:
+        require: ['coffee-script/register']
+      test:
         options:
           reporter: 'nyan'
-          require: 'coffee-script/register'
           colors: true
-          quiet: false
-        src: 'test/specs/**/*.spec.+(coffee|litcoffee|js)'
-      server:
+        src: ['test/specs/**/*.spec.+(coffee|litcoffee|js)']
+      coverage:
         options:
-          reporter: 'html'
-          require: 'coffee-script/register'
+          reporter: 'html-cov'
           colors: false
           quiet: true
-          captureFile: 'test_results/mocha.html'
-        src: 'test/specs/**/*_spec.+(coffee|litcoffee|js)'
+          output: 'test_results/mocha.html'
+        src: ['test/specs/**/*.spec.+(coffee|litcoffee|js)']
 
     watch:
       options:
@@ -64,10 +62,10 @@ module.exports = (grunt) ->
       ['compile', 'doc']
 
     grunt.registerTask 'test:client', 'Run UT locally',
-      ['mochaTest:client']
+      ['clean:test', 'mochacov:test', 'mochacov:coverage']
 
     grunt.registerTask 'test:server', 'Run UT at server side',
-      ['clean:test', 'mochaTest:server']
+      ['clean:test', 'mochacov:coverage']
 
     grunt.registerTask 'dev', 'Start developing',
       ['build', 'watch']
