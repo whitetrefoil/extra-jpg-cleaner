@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>finder.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>finder.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="argv.html">
+                    argv.litcoffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="cleaner.html">
+                    cleaner.litcoffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="finder.html">
+                    finder.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <p>This file provide the file searching function.</p>
+
+        
+      
+        
+        <p><code>&quot;use strict&quot;;</code> always first :)</p>
+
+        
+          <div class='highlight'><pre>
+<span class="hljs-string">'use strict'</span></pre></div>
+        
+      
+        
+        <h2 id="dependencies">Dependencies</h2>
+
+        
+      
+        
+        <p>Require all the dependencies.</p>
+
+        
+          <div class='highlight'><pre>
+path = <span class="hljs-built_in">require</span> <span class="hljs-string">'path'</span>
+fs = <span class="hljs-built_in">require</span> <span class="hljs-string">'fs'</span>
+Glob = <span class="hljs-built_in">require</span>(<span class="hljs-string">'glob'</span>).Glob</pre></div>
+        
+      
+        
+        <h2 id="core-functions">Core Functions</h2>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">
+<span class="hljs-title">getBaseDir</span> = <span class="hljs-params">(dest)</span> -&gt;</span>
+  dest = <span class="hljs-string">''</span> <span class="hljs-keyword">unless</span> <span class="hljs-keyword">typeof</span> dest <span class="hljs-keyword">is</span> <span class="hljs-string">'string'</span>
+  normalized = path.normalize(dest)
+  cwd = process.cwd()
+  fullPath = path.resolve cwd, normalized
+  removeWindowsDriverLetter = fullPath.replace <span class="hljs-regexp">/^[A-Za-z]:/</span>, <span class="hljs-string">''</span>
+  unixSplash = removeWindowsDriverLetter.replace <span class="hljs-regexp">/\\/g, '/</span><span class="hljs-string">'
+  unixSplash += '</span><span class="hljs-regexp">/' unless unixSplash[unixSplash.length - 1] is '/</span><span class="hljs-string">'
+  unixSplash
+
+
+</span></pre></div>
+        
+      
+        
+        <p>Now here are the core functions - finding, renaming, deleting, etc.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">
+<span class="hljs-title">find</span> = <span class="hljs-params">(dest, extnames, cb, args...)</span> -&gt;</span>
+  pattern = getBaseDir(dest) + <span class="hljs-string">'**/*.+(jpg|jpeg|jpe)'</span>
+
+  matching = <span class="hljs-keyword">new</span> Glob pattern,
+    <span class="hljs-attribute">nocase</span>: <span class="hljs-literal">true</span>
+
+  found = <span class="hljs-number">0</span>
+
+  matching.<span class="hljs-literal">on</span> <span class="hljs-string">'match'</span>, <span class="hljs-function"><span class="hljs-params">(file)</span> -&gt;</span>
+    file = path.normalize file
+    bareFileName = path.join(path.dirname(file), path.basename(file, path.extname(file)))
+    <span class="hljs-keyword">if</span> (extnames.some (extname) -&gt; fs.existsSync(bareFileName + <span class="hljs-string">'.'</span> + extname))
+      found += <span class="hljs-number">1</span>
+      cb?.apply <span class="hljs-literal">null</span>, [ file ].concat(args)
+
+  matching.<span class="hljs-literal">on</span> <span class="hljs-string">'end'</span>, <span class="hljs-function">-&gt;</span>
+    <span class="hljs-built_in">console</span>.log <span class="hljs-string">"<span class="hljs-subst">#{found}</span> files processed"</span>.green</pre></div>
+        
+      
+        
+        <p>An async find will be good for performance,
+but when doing deleting we want a sync find then allow a confirmation before finally deleting.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">
+<span class="hljs-title">findSync</span> = <span class="hljs-params">(dest, extnames, cb, args...)</span> -&gt;</span>
+  pattern = getBaseDir(dest) + <span class="hljs-string">'**/*.+(jpg|jpeg|jpe)'</span>
+
+  matching = <span class="hljs-keyword">new</span> Glob pattern,
+    <span class="hljs-attribute">nocase</span>: <span class="hljs-literal">true</span>
+
+  matching.<span class="hljs-literal">on</span> <span class="hljs-string">'end'</span>, <span class="hljs-function"><span class="hljs-params">(files)</span> -&gt;</span>
+    targetFiles = files.filter (file) -&gt;
+      file = path.normalize file
+      bareFileName = path.join(path.dirname(file), path.basename(file, path.extname(file)))
+      extnames.some (extname) -&gt; fs.existsSync(bareFileName + <span class="hljs-string">'.'</span> + extname)
+    cb?.apply <span class="hljs-literal">null</span>, [ targetFiles ].concat(args)</pre></div>
+        
+      
+        
+        <h2 id="exporting">Exporting</h2>
+
+        
+          <div class='highlight'><pre>
+<span class="hljs-built_in">module</span>.exports =
+  <span class="hljs-attribute">find</span>: find
+  <span class="hljs-attribute">findSync</span>: findSync</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>
