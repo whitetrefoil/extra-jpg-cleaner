@@ -284,5 +284,9 @@ Public API
 -----
 
 Now we can publish the main entry point.
+Or run it directly.
 
-    module.exports = main
+    if require.main is module
+      main()
+    else
+      module.exports = main
