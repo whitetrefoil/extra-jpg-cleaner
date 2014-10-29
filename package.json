@@ -1,46 +1,61 @@
 {
-    "name":            "extra-jpg-cleaner",
-    "preferGlobal":    true,
-    "version":         "0.0.1-alpha.4",
-    "author":          "WhiteTrefoil <whitetrefoil@gmail.com>",
-    "description":     "a simple tool to remove JPG files which append to ARW files",
-    "bin":             {
-        "clean-jpg": "./bin/clean-jpg"
-    },
-    "scripts":         {
-        "start": "node ./bin/clean-jpg",
-        "test":  "node ./node_modules/mocha/bin/mocha -R nyan -c -s 100 -u bdd --recursive --compilers coffee:coffee-script/register test/specs/*_spec.coffee"
-    },
-    "main":            "./lib/cleaner",
-    "repository":      {
-        "type": "git",
-        "url":  "https://github.com/whitetrefoil/extra-jpg-cleaner.git"
-    },
-    "keywords":        [
-        "jpg",
-        "raw",
-        "arw",
-        "photo",
-        "photography"
-    ],
-    "dependencies":    {
-        "glob":   "^4.0.6",
-        "colors": "^1.0.3",
-        "lodash": "^2.4.1",
-        "yargs":  "^1.3.2"
-    },
-    "devDependencies": {
-        "chai":          "^1.9.2",
-        "sinon":         "^1.11.1",
-        "sinon-chai":    "^2.6.0",
-        "mocha":         "^2.0.1",
-        "coffee-script": "^1.8.0",
-        "docco":         "^0.6.3",
-        "wrench":        "^1.5.8"
-    },
-    "license":         "MIT",
-    "engines":         {
-        "node": ">=0.10"
-    },
-    "readmeFilename":  "README.md"
+  "name":            "extra-jpg-cleaner",
+  "preferGlobal":    true,
+  "version":         "0.0.1-alpha.4",
+  "author":          "WhiteTrefoil <whitetrefoil@gmail.com>",
+  "description":     "a simple tool to remove JPG files which append to ARW files",
+  "bin":             {
+    "clean-jpg": "./bin/clean-jpg"
+  },
+  "scripts":         {
+    "start": "node ./bin/clean-jpg",
+    "test":  "node ./node_modules/mocha/bin/mocha -R nyan -c -s 100 -u bdd --recursive --compilers coffee:coffee-script/register test/specs/*_spec.coffee"
+  },
+  "main":            "./lib/cleaner",
+  "repository":      {
+    "type": "git",
+    "url":  "https://github.com/whitetrefoil/extra-jpg-cleaner.git"
+  },
+  "keywords":        [
+    "jpg",
+    "raw",
+    "arw",
+    "photo",
+    "photography"
+  ],
+  "dependencies":    {
+    "colors": "^1.0.3",
+    "glob":   "^4.0.6",
+    "lodash": "^2.4.1",
+    "yargs":  "^1.3.2"
+  },
+  "devDependencies": {
+    "chai":                 "^1.9.2",
+    "coffee-script":        "^1.8.0",
+    "docco":                "^0.6.3",
+    "grunt":                "^0.4.5",
+    "grunt-contrib-clean":  "^0.6.0",
+    "grunt-contrib-coffee": "^0.12.0",
+    "grunt-contrib-watch":  "^0.6.1",
+    "grunt-docco":          "^0.3.3",
+    "grunt-mocha-cov":      "^0.3.0",
+    "load-grunt-tasks":     "^1.0.0",
+    "mocha":                "^2.0.1",
+    "sinon":                "^1.11.1",
+    "sinon-chai":           "^2.6.0",
+    "time-grunt":           "^1.0.0",
+    "wrench":               "^1.5.8"
+  },
+  "license":         "MIT",
+  "engines":         {
+    "node": ">=0.10"
+  },
+  "readmeFilename":  "README.md",
+  "config":          {
+    "blanket": {
+      "data-cover-only":  "src/",
+      "data-cover-never": "node_modules/",
+      "loader":           "./node-loaders/coffee-script"
+    }
+  }
 }
