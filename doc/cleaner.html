@@ -42,6 +42,13 @@
                   </a>
                 </li>
               
+                
+                <li>
+                  <a class="source" href="operations.html">
+                    operations.coffee
+                  </a>
+                </li>
+              
             </ol>
           </div>
         
@@ -58,11 +65,7 @@
       
         
         <h2 id="dependencies">Dependencies</h2>
-
-        
-      
-        
-        <p>Require all the dependencies.</p>
+<p>Require all the dependencies.</p>
 <p>Firstly get the arguments from <a href="argv.html">argv.litcoffee</a></p>
 
         
@@ -77,8 +80,7 @@
 colors = <span class="hljs-built_in">require</span> <span class="hljs-string">'colors'</span>
 fs = <span class="hljs-built_in">require</span> <span class="hljs-string">'fs'</span>
 path = <span class="hljs-built_in">require</span> <span class="hljs-string">'path'</span>
-readline = <span class="hljs-built_in">require</span> <span class="hljs-string">'readline'</span>
-Glob = <span class="hljs-built_in">require</span>(<span class="hljs-string">'glob'</span>).Glob</pre></div>
+readline = <span class="hljs-built_in">require</span> <span class="hljs-string">'readline'</span></pre></div>
         
       
         
@@ -89,12 +91,15 @@ Glob = <span class="hljs-built_in">require</span>(<span class="hljs-string">'glo
         
       
         
-        <h2 id="entry-point">Entry Point</h2>
+        <p>File operation functions.</p>
 
+        
+          <div class='highlight'><pre>ops = <span class="hljs-built_in">require</span> <span class="hljs-string">'./operations'</span></pre></div>
         
       
         
-        <p>The <code>main()</code> function of the whole application.</p>
+        <h2 id="entry-point">Entry Point</h2>
+<p>The <code>main()</code> function of the whole application.</p>
 <p>Firstly it will get all the configurations from <code>yargs</code>.</p>
 <p>If given a <code>--help</code> or <code>-h</code>, we will print a help message no matter what else is given.  Besides, if no valid argument is given, we will also print he help message.</p>
 <p>I’d like to leave the <code>argv</code> open.
@@ -115,13 +120,13 @@ it will also print the help message.</p>
     <span class="hljs-keyword">if</span> configs.help
         printHelp()
     <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> configs.list
-      finder.find configs.destination, configs.extnames, list
+      finder.find configs.destination, configs.extnames, ops.list
     <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> configs.remove
-      finder.findSync configs.destination, configs.extnames, removeWithConfirmation, configs.verbose
+      finder.findSync configs.destination, configs.extnames, ops.remove, configs.verbose
     <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> configs.removeDirectly
-      finder.findSync configs.destination, configs.extnames, removeDirectly, configs.verbose
+      finder.findSync configs.destination, configs.extnames, ops.removeSilently, configs.verbose
     <span class="hljs-keyword">else</span>
-      finder.find configs.destination, configs.extnames, rename, configs.renameTo, configs.verbose
+      finder.find configs.destination, configs.extnames, ops.rename, configs.renameTo, configs.verbose
   <span class="hljs-keyword">else</span>
     messages.forEach (msg) -&gt;
       <span class="hljs-built_in">console</span>.error <span class="hljs-string">'Error: '</span>.red.bold + msg
@@ -130,82 +135,8 @@ it will also print the help message.</p>
         
       
         
-        <h2 id="core-functions">Core Functions</h2>
-
-        
-      
-        
-        <p>List a single file.
-Used for <code>-l</code>.
-Since this function will be called by a async find,
-it only need to handle a single file.</p>
-
-        
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">list</span> = <span class="hljs-params">(file)</span> -&gt;</span>
-  <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Found: '</span>.green + file</pre></div>
-        
-      
-        
-        <p>Just like <code>#list()</code>, it only need to rename a single file.</p>
-
-        
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">rename</span> = <span class="hljs-params">(file, renameTo, verbose)</span> -&gt;</span>
-  newName = path.join(path.dirname(file), path.basename(file, path.extname(file))) + <span class="hljs-string">'.'</span> + renameTo
-  fs.rename file, newName
-  <span class="hljs-keyword">if</span> verbose
-    <span class="hljs-built_in">console</span>.log <span class="hljs-string">'File: '</span> + file.yellow + <span class="hljs-string">'\n  To: '</span> + newName.cyan</pre></div>
-        
-      
-        
-        <p>But this one is different.
-Since deleting is too dangerous, we want double confirm with the user.
-So it will be a sync flow.</p>
-
-        
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">removeWithConfirmation</span> = <span class="hljs-params">(files, verbose)</span> -&gt;</span>
-  <span class="hljs-keyword">if</span> files.length <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
-    <span class="hljs-built_in">console</span>.log <span class="hljs-string">'No file to delete, cheers!'</span>.cyan
-  <span class="hljs-keyword">else</span>
-    files.forEach (file) -&gt;
-      <span class="hljs-built_in">console</span>.log file
-    <span class="hljs-built_in">console</span>.log <span class="hljs-string">'The above files ('</span>.yellow + files.length.toString().red.bold + <span class="hljs-string">' at all) will be removed PERMANENTLY!'</span>.yellow
-    <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Please double check and make sure you will never want to see them again!'</span>.yellow
-    <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Input the full path of the first file listed above to continue:'</span>.yellow.bold
-    expected = path.resolve files[<span class="hljs-number">0</span>]
-
-    confirmWithUser expected, <span class="hljs-function">-&gt;</span>
-      files.forEach (file) -&gt;
-        <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Deleting: '</span>.red + file <span class="hljs-keyword">if</span> verbose
-        fs.unlinkSync file
-      <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Deleted! Hopefully you will never repent'</span>.green.bold</pre></div>
-        
-      
-        
-        <p>Or maybe the user don’t want to do such a complex confirmation…</p>
-
-        
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">removeDirectly</span> = <span class="hljs-params">(files, verbose)</span> -&gt;</span>
-  <span class="hljs-keyword">if</span> files.length <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
-    <span class="hljs-built_in">console</span>.log <span class="hljs-string">'No file to delete, cheers!'</span>.cyan
-  <span class="hljs-keyword">else</span>
-    files.forEach (file) -&gt;
-      <span class="hljs-built_in">console</span>.log file
-    <span class="hljs-built_in">console</span>.log <span class="hljs-string">'The above files ('</span>.yellow + files.length.toString().red.bold + <span class="hljs-string">' at all) will be removed PERMANENTLY!'</span>.yellow
-    <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Are you really sure? (Y/N)'</span>
-    confirmWithUser <span class="hljs-string">'Y'</span>, <span class="hljs-function">-&gt;</span>
-      files.forEach (file) -&gt;
-        <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Deleting: '</span>.red + file <span class="hljs-keyword">if</span> verbose
-        fs.unlinkSync file
-      <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Deleted! Hopefully you will never repent'</span>.green.bold</pre></div>
-        
-      
-        
         <h2 id="helpers">Helpers</h2>
-
-        
-      
-        
-        <p>A function to print the help message to the users.</p>
+<p>A function to print the help message to the users.</p>
 <p>By default <code>Yargs</code> will print the help message to <code>stderr</code>. I don’t like it, so I redirected it to <code>stdout</code>.</p>
 
         
@@ -214,39 +145,8 @@ So it will be a sync flow.</p>
         
       
         
-        <p>Ask user for a confirmation.
-Used before deleting files.</p>
-
-        
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">confirmWithUser</span> = <span class="hljs-params">(expected, cb)</span> -&gt;</span>
-  rl = readline.createInterface
-    <span class="hljs-attribute">input</span>: process.stdin
-    <span class="hljs-attribute">output</span>: process.stdout
-
-  rl.setPrompt <span class="hljs-string">'I say: '</span>, <span class="hljs-number">7</span>
-  rl.prompt()
-
-  rl.<span class="hljs-literal">on</span> <span class="hljs-string">'line'</span>, <span class="hljs-function"><span class="hljs-params">(input)</span> -&gt;</span>
-    <span class="hljs-keyword">try</span>
-      isCorrect = input.trim() <span class="hljs-keyword">is</span> expected
-    <span class="hljs-keyword">catch</span> e
-      isCorrect = <span class="hljs-literal">false</span>
-
-    <span class="hljs-keyword">if</span> isCorrect
-      rl.close()
-      cb?()
-    <span class="hljs-keyword">else</span>
-      <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Wrong! Try again? Or press Ctrl-C to abort'</span>.yellow
-      rl.prompt()</pre></div>
-        
-      
-        
         <h2 id="initialize-configuration">Initialize &amp; Configuration</h2>
-
-        
-      
-        
-        <p>Get the configurations from <code>yargs</code>.</p>
+<p>Get the configurations from <code>yargs</code>.</p>
 
         
           <div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">getConfigs</span> = <span class="hljs-params">(argv)</span> -&gt;</span>
@@ -330,11 +230,7 @@ Used before deleting files.</p>
       
         
         <h2 id="public-api">Public API</h2>
-
-        
-      
-        
-        <p>Now we can publish the main entry point.
+<p>Now we can publish the main entry point.
 Or run it directly.</p>
 
         
