@@ -21,9 +21,10 @@ getBaseDir = (dest) ->
   dest = '' unless typeof dest is 'string'
   normalized = path.normalize(dest)
   cwd = process.cwd()
-  fullPath = path.resolve cwd, normalized
-  removeWindowsDriverLetter = fullPath.replace /^[A-Za-z]:/, ''
-  unixSplash = removeWindowsDriverLetter.replace /\\/g, '/'
+  if dest.search(/[/\\]/) is 0
+    cwd = cwd.substr 0, cwd.search(/[/\\]/) + 1
+  fullPath = path.join cwd, normalized
+  unixSplash = fullPath.replace /\\/g, '/'
   unixSplash += '/' unless unixSplash[unixSplash.length - 1] is '/'
   unixSplash
 

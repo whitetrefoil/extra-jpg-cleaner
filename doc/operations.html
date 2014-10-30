@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>operations.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>operations.coffee</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="argv.html">
+                    argv.litcoffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="cleaner.html">
+                    cleaner.litcoffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="finder.html">
+                    finder.coffee
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="operations.html">
+                    operations.coffee
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        <p>This file provide the file operating functions.</p>
+
+        
+      
+        
+        <p><code>&quot;use strict&quot;;</code> always first :)</p>
+
+        
+          <div class='highlight'><pre>
+<span class="hljs-string">'use strict'</span></pre></div>
+        
+      
+        
+        <h2 id="dependencies">Dependencies</h2>
+
+        
+          <div class='highlight'><pre>
+_ = <span class="hljs-built_in">require</span> <span class="hljs-string">'lodash'</span>
+colors = <span class="hljs-built_in">require</span> <span class="hljs-string">'colors'</span>
+fs = <span class="hljs-built_in">require</span> <span class="hljs-string">'fs'</span>
+path = <span class="hljs-built_in">require</span> <span class="hljs-string">'path'</span>
+readline = <span class="hljs-built_in">require</span> <span class="hljs-string">'readline'</span></pre></div>
+        
+      
+        
+        <h2 id="core-functions">Core Functions</h2>
+
+        
+      
+        
+        <p>List a single file.
+Used for <code>-l</code>.
+Since this function will be called by a async find,
+it only need to handle a single file.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">
+<span class="hljs-title">list</span> = <span class="hljs-params">(file)</span> -&gt;</span>
+  <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Found: '</span>.green + file</pre></div>
+        
+      
+        
+        <p>Just like <code>#list()</code>, it only need to rename a single file.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">
+<span class="hljs-title">rename</span> = <span class="hljs-params">(file, renameTo, verbose)</span> -&gt;</span>
+  newName = path.join(path.dirname(file), path.basename(file, path.extname(file))) + <span class="hljs-string">'.'</span> + renameTo
+  fs.rename file, newName
+  <span class="hljs-keyword">if</span> verbose
+    <span class="hljs-built_in">console</span>.log <span class="hljs-string">'File: '</span> + file.yellow + <span class="hljs-string">'\n  To: '</span> + newName.cyan</pre></div>
+        
+      
+        
+        <p>But this one is different.
+Since deleting is too dangerous, we want double confirm with the user.
+So it will be a sync flow.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">
+<span class="hljs-title">remove</span> = <span class="hljs-params">(files, verbose)</span> -&gt;</span>
+  <span class="hljs-keyword">if</span> files.length <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
+    <span class="hljs-built_in">console</span>.log <span class="hljs-string">'No file to delete, cheers!'</span>.cyan
+  <span class="hljs-keyword">else</span>
+    files.forEach (file) -&gt;
+      <span class="hljs-built_in">console</span>.log file
+    <span class="hljs-built_in">console</span>.log <span class="hljs-string">'The above files ('</span>.yellow + files.length.toString().red.bold + <span class="hljs-string">' at all) will be removed PERMANENTLY!'</span>.yellow
+    <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Please double check and make sure you will never want to see them again!'</span>.yellow
+    <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Input the full path of the first file listed above to continue:'</span>.yellow.bold
+    expected = path.resolve files[<span class="hljs-number">0</span>]
+
+    confirmWithUser expected, <span class="hljs-function">-&gt;</span>
+      files.forEach (file) -&gt;
+        <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Deleting: '</span>.red + file <span class="hljs-keyword">if</span> verbose
+        fs.unlinkSync file
+      <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Deleted! Hopefully you will never repent'</span>.green.bold</pre></div>
+        
+      
+        
+        <p>Or maybe the user don’t want to do such a complex confirmation…</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">
+<span class="hljs-title">removeSilently</span> = <span class="hljs-params">(files, verbose)</span> -&gt;</span>
+  <span class="hljs-keyword">if</span> files.length <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
+    <span class="hljs-built_in">console</span>.log <span class="hljs-string">'No file to delete, cheers!'</span>.cyan
+  <span class="hljs-keyword">else</span>
+    files.forEach (file) -&gt;
+      <span class="hljs-built_in">console</span>.log file
+    <span class="hljs-built_in">console</span>.log <span class="hljs-string">'The above files ('</span>.yellow + files.length.toString().red.bold + <span class="hljs-string">' at all) will be removed PERMANENTLY!'</span>.yellow
+    <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Are you really sure? (Y/N)'</span>
+    confirmWithUser <span class="hljs-string">'Y'</span>, <span class="hljs-function">-&gt;</span>
+      files.forEach (file) -&gt;
+        <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Deleting: '</span>.red + file <span class="hljs-keyword">if</span> verbose
+        fs.unlinkSync file
+      <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Deleted! Hopefully you will never repent'</span>.green.bold</pre></div>
+        
+      
+        
+        <p>Ask user for a confirmation.
+Used before deleting files.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">
+<span class="hljs-title">confirmWithUser</span> = <span class="hljs-params">(expected, cb)</span> -&gt;</span>
+  rl = readline.createInterface
+    <span class="hljs-attribute">input</span>: process.stdin
+    <span class="hljs-attribute">output</span>: process.stdout
+
+  rl.setPrompt <span class="hljs-string">'I say: '</span>, <span class="hljs-number">7</span>
+  rl.prompt()
+
+  rl.<span class="hljs-literal">on</span> <span class="hljs-string">'line'</span>, <span class="hljs-function"><span class="hljs-params">(input)</span> -&gt;</span>
+    <span class="hljs-keyword">try</span>
+      isCorrect = input.trim() <span class="hljs-keyword">is</span> expected
+    <span class="hljs-keyword">catch</span> e
+      isCorrect = <span class="hljs-literal">false</span>
+
+    <span class="hljs-keyword">if</span> isCorrect
+      rl.close()
+      cb?()
+    <span class="hljs-keyword">else</span>
+      <span class="hljs-built_in">console</span>.log <span class="hljs-string">'Wrong! Try again? Or press Ctrl-C to abort'</span>.yellow
+      rl.prompt()</pre></div>
+        
+      
+        
+        <h2 id="export">Export</h2>
+
+        
+          <div class='highlight'><pre>
+<span class="hljs-built_in">module</span>.exports =
+  <span class="hljs-attribute">list</span>: list
+  <span class="hljs-attribute">rename</span>: rename
+  <span class="hljs-attribute">remove</span>: remove
+  <span class="hljs-attribute">removeSilently</span>: removeSilently</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

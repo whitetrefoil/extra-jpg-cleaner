@@ -42,6 +42,13 @@
                   </a>
                 </li>
               
+                
+                <li>
+                  <a class="source" href="operations.html">
+                    operations.coffee
+                  </a>
+                </li>
+              
             </ol>
           </div>
         
@@ -85,9 +92,10 @@ Glob = <span class="hljs-built_in">require</span>(<span class="hljs-string">'glo
   dest = <span class="hljs-string">''</span> <span class="hljs-keyword">unless</span> <span class="hljs-keyword">typeof</span> dest <span class="hljs-keyword">is</span> <span class="hljs-string">'string'</span>
   normalized = path.normalize(dest)
   cwd = process.cwd()
-  fullPath = path.resolve cwd, normalized
-  removeWindowsDriverLetter = fullPath.replace <span class="hljs-regexp">/^[A-Za-z]:/</span>, <span class="hljs-string">''</span>
-  unixSplash = removeWindowsDriverLetter.replace <span class="hljs-regexp">/\\/g, '/</span><span class="hljs-string">'
+  <span class="hljs-keyword">if</span> dest.search(<span class="hljs-regexp">/[/</span>\\]/) <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
+    cwd = cwd.substr <span class="hljs-number">0</span>, cwd.search(<span class="hljs-regexp">/[/</span>\\]/) + <span class="hljs-number">1</span>
+  fullPath = path.join cwd, normalized
+  unixSplash = fullPath.replace <span class="hljs-regexp">/\\/g, '/</span><span class="hljs-string">'
   unixSplash += '</span><span class="hljs-regexp">/' unless unixSplash[unixSplash.length - 1] is '/</span><span class="hljs-string">'
   unixSplash
 
