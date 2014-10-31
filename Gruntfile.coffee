@@ -36,14 +36,6 @@ module.exports = (grunt) ->
           reporter: 'nyan'
           colors: true
         src: ['test/specs/**/*.spec.+(coffee|litcoffee|js)']
-      coverage:
-        options:
-          reporter: 'html-cov'
-          colors: false
-          quiet: true
-          output: 'test_results/mocha.html'
-        src: ['test/specs/**/*.spec.+(coffee|litcoffee|js)']
-
     watch:
       options:
         forever: true
@@ -61,11 +53,8 @@ module.exports = (grunt) ->
     grunt.registerTask 'build', 'Build the project',
       ['compile', 'doc']
 
-    grunt.registerTask 'test:client', 'Run UT locally',
-      ['clean:test', 'mochacov:test', 'mochacov:coverage']
-
-    grunt.registerTask 'test:server', 'Run UT at server side',
-      ['clean:test', 'mochacov:coverage']
+    grunt.registerTask 'test', 'Run UT locally',
+      ['clean:test', 'mochacov:test']
 
     grunt.registerTask 'dev', 'Start developing',
       ['build', 'watch']

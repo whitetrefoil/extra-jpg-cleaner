@@ -2,26 +2,22 @@
 
 path = require 'path'
 fs = require 'fs-extra'
+glob = require 'glob'
 should = require('chai').should()
 rewire = require 'rewire'
 operations = rewire '../../src/operations'
 main = rewire '../../src/cleaner'
 
 describe 'E2E:', ->
-  stdout = ''
-  before ->
-    @consoleRecover = operations.__set__ 'console',
-      log: (args...) -> args.forEach (arg) -> stdout += arg
-    fs.removeSync 'test/sandbox'
-  beforeEach ->
-    stdout = ''
-    fs.copySync 'test/sandbox_src', 'test/sandbox'
-  afterEach ->
-    fs.removeSync 'test/sandbox'
-  after ->
-    @consoleRecover()
+  before -> fs.removeSync 'test/.sandbox'
+  beforeEach -> fs.copySync 'test/sandbox_src', 'test/.sandbox'
+  afterEach -> fs.removeSync 'test/.sandbox'
 
-  describe 'Help:', ->
-    it 'should show help when -h is given', ->
-      main(['-h'])
-  describe 'List:', ->
+  it.only 'should rename', (done) ->
+    main ['test/.sandbox', '-r', 'test-ext']
+    setTimeout ->
+      glob.sync('test/.sandbox/**/*.test-ext', { nocase: true }).length.should.equal(6)
+      glob.sync('test/.sandbox/**/*.jpg', { nocase: true }).length.should.equal(6)
+      done()
+    , 500
+  return

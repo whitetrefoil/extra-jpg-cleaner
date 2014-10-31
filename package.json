@@ -51,12 +51,5 @@
   "engines":         {
     "node": ">=0.10"
   },
-  "readmeFilename":  "README.md",
-  "config":          {
-    "blanket": {
-      "data-cover-only":  "src/",
-      "data-cover-never": "node_modules/",
-      "loader":           "./node-loaders/coffee-script"
-    }
-  }
+  "readmeFilename":  "README.md"
 }
