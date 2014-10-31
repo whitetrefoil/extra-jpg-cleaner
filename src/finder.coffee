@@ -17,25 +17,36 @@ Glob = require('glob').Glob
 # Core Functions
 # --------------
 
+# Get `BaseDir` from the destination passed in.
+
 getBaseDir = (dest) ->
   dest = '' unless typeof dest is 'string'
   normalized = path.normalize(dest)
   cwd = process.cwd()
   if dest.search(/[/\\]/) is 0
     cwd = cwd.substr 0, cwd.search(/[/\\]/) + 1
-  fullPath = path.join cwd, normalized
+  fullPath = path.resolve cwd, normalized
   unixSplash = fullPath.replace /\\/g, '/'
   unixSplash += '/' unless unixSplash[unixSplash.length - 1] is '/'
   unixSplash
 
 
+# Separated the normal full path into root + Unix style abs path.
+# This can bypass the drive letter issue of `node-glob`.
+
+separateRoot = (fullPath) ->
+  parsed = fullPath.match(/(.*?\/)(.*)/)
+  [ parsed[1], parsed[2] ]
+
+
 # Now here are the core functions - finding, renaming, deleting, etc.
 
 find = (dest, extnames, cb, args...) ->
-  pattern = getBaseDir(dest) + '**/*.+(jpg|jpeg|jpe)'
-
+  [root, pattern] = separateRoot(getBaseDir(dest))
+  pattern = '/' + pattern + '**/*.+(jpg|jpeg|jpe)'
   matching = new Glob pattern,
     nocase: true
+    root: root
 
   found = 0
 
@@ -54,10 +65,11 @@ find = (dest, extnames, cb, args...) ->
 # but when doing deleting we want a sync find then allow a confirmation before finally deleting.
 
 findSync = (dest, extnames, cb, args...) ->
-  pattern = getBaseDir(dest) + '**/*.+(jpg|jpeg|jpe)'
-
+  [root, pattern] = separateRoot(getBaseDir(dest))
+  pattern = '/' + pattern + '**/*.+(jpg|jpeg|jpe)'
   matching = new Glob pattern,
     nocase: true
+    root: root
 
   matching.on 'end', (files) ->
     targetFiles = files.filter (file) ->

@@ -87,6 +87,11 @@ Glob = <span class="hljs-built_in">require</span>(<span class="hljs-string">'glo
         <h2 id="core-functions">Core Functions</h2>
 
         
+      
+        
+        <p>Get <code>BaseDir</code> from the destination passed in.</p>
+
+        
           <div class='highlight'><pre><span class="hljs-function">
 <span class="hljs-title">getBaseDir</span> = <span class="hljs-params">(dest)</span> -&gt;</span>
   dest = <span class="hljs-string">''</span> <span class="hljs-keyword">unless</span> <span class="hljs-keyword">typeof</span> dest <span class="hljs-keyword">is</span> <span class="hljs-string">'string'</span>
@@ -94,7 +99,7 @@ Glob = <span class="hljs-built_in">require</span>(<span class="hljs-string">'glo
   cwd = process.cwd()
   <span class="hljs-keyword">if</span> dest.search(<span class="hljs-regexp">/[/</span>\\]/) <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>
     cwd = cwd.substr <span class="hljs-number">0</span>, cwd.search(<span class="hljs-regexp">/[/</span>\\]/) + <span class="hljs-number">1</span>
-  fullPath = path.join cwd, normalized
+  fullPath = path.resolve cwd, normalized
   unixSplash = fullPath.replace <span class="hljs-regexp">/\\/g, '/</span><span class="hljs-string">'
   unixSplash += '</span><span class="hljs-regexp">/' unless unixSplash[unixSplash.length - 1] is '/</span><span class="hljs-string">'
   unixSplash
@@ -104,15 +109,27 @@ Glob = <span class="hljs-built_in">require</span>(<span class="hljs-string">'glo
         
       
         
+        <p>Separated the normal full path into root + Unix style abs path.
+This can bypass the drive letter issue of <code>node-glob</code>.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-function">
+<span class="hljs-title">separateRoot</span> = <span class="hljs-params">(fullPath)</span> -&gt;</span>
+  parsed = fullPath.match(<span class="hljs-regexp">/(.*?\/)(.*)/</span>)
+  [ parsed[<span class="hljs-number">1</span>], parsed[<span class="hljs-number">2</span>] ]</pre></div>
+        
+      
+        
         <p>Now here are the core functions - finding, renaming, deleting, etc.</p>
 
         
           <div class='highlight'><pre><span class="hljs-function">
 <span class="hljs-title">find</span> = <span class="hljs-params">(dest, extnames, cb, args...)</span> -&gt;</span>
-  pattern = getBaseDir(dest) + <span class="hljs-string">'**/*.+(jpg|jpeg|jpe)'</span>
-
+  [root, pattern] = separateRoot(getBaseDir(dest))
+  pattern = <span class="hljs-string">'/'</span> + pattern + <span class="hljs-string">'**/*.+(jpg|jpeg|jpe)'</span>
   matching = <span class="hljs-keyword">new</span> Glob pattern,
     <span class="hljs-attribute">nocase</span>: <span class="hljs-literal">true</span>
+    <span class="hljs-attribute">root</span>: root
 
   found = <span class="hljs-number">0</span>
 
@@ -134,10 +151,11 @@ but when doing deleting we want a sync find then allow a confirmation before fin
         
           <div class='highlight'><pre><span class="hljs-function">
 <span class="hljs-title">findSync</span> = <span class="hljs-params">(dest, extnames, cb, args...)</span> -&gt;</span>
-  pattern = getBaseDir(dest) + <span class="hljs-string">'**/*.+(jpg|jpeg|jpe)'</span>
-
+  [root, pattern] = separateRoot(getBaseDir(dest))
+  pattern = <span class="hljs-string">'/'</span> + pattern + <span class="hljs-string">'**/*.+(jpg|jpeg|jpe)'</span>
   matching = <span class="hljs-keyword">new</span> Glob pattern,
     <span class="hljs-attribute">nocase</span>: <span class="hljs-literal">true</span>
+    <span class="hljs-attribute">root</span>: root
 
   matching.<span class="hljs-literal">on</span> <span class="hljs-string">'end'</span>, <span class="hljs-function"><span class="hljs-params">(files)</span> -&gt;</span>
     targetFiles = files.filter (file) -&gt;
