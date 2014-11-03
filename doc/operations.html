@@ -104,9 +104,9 @@ it only need to handle a single file.</p>
           <div class='highlight'><pre><span class="hljs-function">
 <span class="hljs-title">rename</span> = <span class="hljs-params">(file, renameTo, verbose)</span> -&gt;</span>
   newName = path.join(path.dirname(file), path.basename(file, path.extname(file))) + <span class="hljs-string">'.'</span> + renameTo
-  fs.rename file, newName
-  <span class="hljs-keyword">if</span> verbose
-    <span class="hljs-built_in">console</span>.log <span class="hljs-string">'File: '</span> + file.yellow + <span class="hljs-string">'\n  To: '</span> + newName.cyan</pre></div>
+  fs.rename file, newName, <span class="hljs-function">-&gt;</span>
+    <span class="hljs-keyword">if</span> verbose
+      <span class="hljs-built_in">console</span>.log <span class="hljs-string">'File: '</span> + file.yellow + <span class="hljs-string">'\n  To: '</span> + newName.cyan</pre></div>
         
       
         

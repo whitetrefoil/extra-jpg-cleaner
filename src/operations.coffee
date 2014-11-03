@@ -31,9 +31,9 @@ list = (file) ->
 
 rename = (file, renameTo, verbose) ->
   newName = path.join(path.dirname(file), path.basename(file, path.extname(file))) + '.' + renameTo
-  fs.rename file, newName
-  if verbose
-    console.log 'File: ' + file.yellow + '\n  To: ' + newName.cyan
+  fs.rename file, newName, ->
+    if verbose
+      console.log 'File: ' + file.yellow + '\n  To: ' + newName.cyan
 
 
 # But this one is different.
